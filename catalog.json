@@ -2,5 +2,5 @@
   "category": "games",
   "short_description": "Fold a pixel sheet about horizontal and vertical creases until its ink matches a target silhouette.",
   "description": "Fold a pixel sheet about horizontal and vertical creases until its ink matches a target silhouette. Amber is the current sheet, pale green is the target. Rotate to select a horizontal or vertical crease; click folds the far side onto the near side. The two layers combine as a union. Start undoes a fold, hold Start resets the puzzle. Click after matching to advance. Every target is derived from legal folds of its starting sheet.",
-  "changelog": "First public version."
+  "changelog": "New screen transitions and high-contrast LED previews."
 }

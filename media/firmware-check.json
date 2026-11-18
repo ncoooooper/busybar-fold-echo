@@ -10,7 +10,7 @@
   "frames": 54,
   "distinct_frames": 15,
   "exit": "App io.ncoooooper.foldecho exited: finished; heap peak 90.7 of 128 KiB",
-  "sha256": "d07af5e99d2a9335ad4c9cce56c5d841711707f48d0da2591bb4cad5df4a3047",
+  "sha256": "4b758fd9231710b824e8b1624fda3586c6a3f04332875b9bc9be9bff29d372f0",
   "display_test": {
     "firmware": "1.3.1",
     "input": "On-device controls",

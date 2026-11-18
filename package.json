@@ -1,7 +1,7 @@
 {
   "name": "busybar-fold-echo",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fold a pixel sheet about horizontal and vertical creases until its ink matches a target silhouette.",
   "author": "ncoooooper",
   "type": "module",

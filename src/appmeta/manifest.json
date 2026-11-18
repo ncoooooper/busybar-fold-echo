@@ -4,6 +4,6 @@
   "name": "Fold Echo",
   "version": "0.1.0",
   "api_version": "27.12.0",
-  "description": "Fold Echo",
+  "description": "Fold a pixel sheet about horizontal and vertical creases until its ink matches a target silhouette.",
   "author": "ncoooooper"
 }

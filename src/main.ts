@@ -1,66 +1,17 @@
-import { device } from "@shared/device";
-import { column, render, type Node } from "@busy-app/busy-lib";
-import manifest from "./appmeta/manifest.json";
-
-/** The name the app draws under; the device clears elements by this id. */
-const APP = manifest.id;
-
-/** How often the screen is redrawn. */
-const TICK_MS = 1000;
-
-const WHITE = "#FFFFFFFF";
-const SUBTLE_WHITE = "#FFFFFF80";
-
-/**
- * The frame drawn on every tick. The screen is 72×16, so two short lines are about all that fits.
- */
-function frame(ticks: number): Node {
-  return column({ justify: "center", align: "center" }, [
-    { type: "text", id: "title", text: "Hello", font: "bold", color: WHITE },
-    {
-      type: "text",
-      id: "ticks",
-      text: String(ticks),
-      font: "small",
-      color: SUBTLE_WHITE,
-    },
-  ]);
-}
-
-/** Sends one frame to the device. */
-async function draw(ticks: number): Promise<void> {
-  const elements = render(frame(ticks));
-  await device.DisplayDraw({ application_name: APP, priority: 50, elements });
-}
-
-/**
- * Entry point, called at the end of the file: the device runs this script from top to bottom and starts nothing by itself.
- */
-function main(): void {
-  let ticks = 0;
-  let stopped = false;
-
-  const report = (err: unknown) =>
-    console.error(`${APP}: ${err instanceof Error ? err.message : String(err)}`);
-
-  void draw(ticks).catch(report);
-
-  // Tick errors are reported, not thrown: one failed request must not stop the loop.
-  const timer = setInterval(() => {
-    ticks += 1;
-    void draw(ticks).catch(report);
-  }, TICK_MS);
-
-  // Back leaves the app. Once the timer is cleared and the handler detached, nothing keeps it alive and the device takes the screen back.
-  const unbind = listen("input", (event) => {
-    if (stopped || event.key !== "back" || event.action !== "short") return;
-
-    stopped = true;
-    clearInterval(timer);
-
-    // Not detached from inside the handler itself: with nothing else left the unbind stops the app on the spot, while this handler is still running.
-    setTimeout(unbind, 0);
-  });
-}
-
-main();
+import {desk} from "@shared/desk";
+import {wrap,rect,type Frame} from "@shared/surface";
+const seeds=[[0,3,6,10,12,15,17,22,27,30],[1,4,7,9,13,18,23,24,28],[0,2,5,8,11,14,19,25,31]];
+const routes=[[3,8],[4,8],[3,9]];const creases=[1,2,3,4,5,6,7,1,2,3];
+function fold(cells:number[],sel:number){const axis=sel>=7,k=creases[sel],o:number[]=[];
+ for(const n of cells){let x=n%8,y=Math.floor(n/8);if(axis&&y>=k)y=2*k-y-1;else if(!axis&&x>=k)x=2*k-x-1;
+ if(x<0||y<0)return cells.slice();const id=y*8+x;if(!o.includes(id))o.push(id);}return o.sort((a,b)=>a-b);}
+type S={level:number;sel:number;hist:number[][];note:string};
+function target(i:number){return routes[i].reduce((a,k)=>fold(a,k),seeds[i]);}
+desk<S>({name:"Fold Echo",accent:"#6DA9E9",motion:{"motif":"folio","color":"#6DA9E9","shine":"#E2F4FF"},initial:()=>({level:0,sel:3,hist:[seeds[0]],note:"Choose a crease"}),render:s=>{
+ const a=s.hist[s.hist.length-1],goal=target(s.level),art:Frame=[];for(const [j,set] of [a,goal].entries())for(const n of set)art.push(rect("p"+j+"-"+n,1+j*37+(n%8)*4,Math.floor(n/8)*4,3,3,j?"#80D3BDFF":"#F2A46AFF"));
+ art.push(rect("crease",s.sel<7?creases[s.sel]*4:0,s.sel>=7?creases[s.sel]*4:0,s.sel<7?1:32,s.sel<7?16:1,"#DBE4D9FF"));return {art,title:"",value:"",lines:["Fold "+(s.level+1)+" / "+seeds.length,s.note,(s.sel>=7?"Horizontal ":"Vertical ")+creases[s.sel],"Left: sheet / right: target","Wheel: crease / click: fold","Start: undo / hold: reset"]};},
+ action:(s,k)=>{if(k==="up"||k==="down")s.sel=wrap(s.sel+(k==="up"?1:-1),creases.length);
+ if(k==="start"&&s.hist.length>1){s.hist.pop();s.note="Fold undone";}if(k==="hold-start"){s.hist=[seeds[s.level]];s.note="Choose a crease";}
+ if(k==="ok"){if(s.note==="Matched"){s.level=wrap(s.level+1,seeds.length);s.hist=[seeds[s.level]];s.note="Choose a crease";return;}
+ const old=s.hist[s.hist.length-1],next=fold(old,s.sel);if(next.join()===old.join()){s.note="Try another crease";return;}
+ s.hist.push(next);s.note=next.join()===target(s.level).join()?"Matched":"Folded";}}});

@@ -1,0 +1,14 @@
+{
+  "id": "BB-049",
+  "source": "On-device interaction and graphics on BUSY Bar firmware 1.3.1.",
+  "scenario": "Folded at vertical crease four and horizontal crease two. The resulting silhouette is compared to the target mask.",
+  "keys": [
+    "ok",
+    "up --times 5",
+    "ok"
+  ],
+  "frames": 54,
+  "distinct_frames": 15,
+  "exit": "App io.ncoooooper.foldecho exited: finished; heap peak 90.7 of 128 KiB",
+  "sha256": "6206295e8ec8fe88a9634caea43f856fe7c26e8f52606cba24f493722c829695"
+}

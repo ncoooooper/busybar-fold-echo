@@ -7,7 +7,7 @@ function fold(cells:number[],sel:number){const axis=sel>=7,k=creases[sel],o:numb
  if(x<0||y<0)return cells.slice();const id=y*8+x;if(!o.includes(id))o.push(id);}return o.sort((a,b)=>a-b);}
 type S={level:number;sel:number;hist:number[][];note:string};
 function target(i:number){return routes[i].reduce((a,k)=>fold(a,k),seeds[i]);}
-desk<S>({name:"Fold Echo",accent:"#6DA9E9",motion:{"motif":"folio","color":"#6DA9E9","shine":"#E2F4FF"},initial:()=>({level:0,sel:3,hist:[seeds[0]],note:"Choose a crease"}),render:s=>{
+desk<S>({name:"Fold Echo",accent:"#6DA9E9",motion:{enabled:false},initial:()=>({level:0,sel:3,hist:[seeds[0]],note:"Choose a crease"}),render:s=>{
  const a=s.hist[s.hist.length-1],goal=target(s.level),art:Frame=[];for(const [j,set] of [a,goal].entries())for(const n of set)art.push(rect("p"+j+"-"+n,1+j*37+(n%8)*4,Math.floor(n/8)*4,3,3,j?"#80D3BDFF":"#F2A46AFF"));
  art.push(rect("crease",s.sel<7?creases[s.sel]*4:0,s.sel>=7?creases[s.sel]*4:0,s.sel<7?1:32,s.sel<7?16:1,"#DBE4D9FF"));return {art,title:"",value:"",lines:["Fold "+(s.level+1)+" / "+seeds.length,s.note,(s.sel>=7?"Horizontal ":"Vertical ")+creases[s.sel],"Left: sheet / right: target","Wheel: crease / click: fold","Start: undo / hold: reset"]};},
  action:(s,k)=>{if(k==="up"||k==="down")s.sel=wrap(s.sel+(k==="up"?1:-1),creases.length);
